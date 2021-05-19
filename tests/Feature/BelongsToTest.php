@@ -62,18 +62,4 @@ class BelongsToTest extends TestCase
         $this->assertEquals($data['id'], $updated->id);
         $this->assertNull($updated->author);
     }
-
-//
-//    /** @test **/
-//    public function it_fills_using_custom_function()
-//    {
-//        $post = PowerSave::make(Post::class)
-//            ->fillUsing(fn (Post $model, array $attributes) => $model->fill(array_merge($attributes, [
-//                'body' => 'Some text'
-//            ])))
-//            ->save(['name' => 'My new blog post']);
-//
-//        $this->assertEquals('My new blog post', $post->name);
-//        $this->assertEquals('Some text', $post->body);
-//    }
 }

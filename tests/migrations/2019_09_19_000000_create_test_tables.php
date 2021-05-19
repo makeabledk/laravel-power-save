@@ -11,12 +11,13 @@ class CreateTestTables extends Migration
      */
     public function up()
     {
-//        Schema::create('comments', function (Blueprint $table) {
-//            $table->id('id');
-//            $table->unsignedBigInteger('author_id')->nullable();
-//            $table->unsignedBigInteger('post_id')->nullable();
-//            $table->timestamps();
-//        });
+        Schema::create('comments', function (Blueprint $table) {
+            $table->id('id');
+            $table->unsignedBigInteger('author_id')->nullable();
+            $table->unsignedBigInteger('post_id')->nullable();
+            $table->string('body')->nullable();
+            $table->timestamps();
+        });
 //        Schema::create('categories', function (Blueprint $table) {
 //            $table->id('id');
 //            $table->timestamps();

@@ -5,20 +5,18 @@ namespace Makeable\LaravelPowerSave\Concerns;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphOneOrMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Arr;
-use Makeable\LaravelPowerSave\PowerSave;
-use Makeable\LaravelPowerSave\RelationBuilder;
 use Makeable\LaravelPowerSave\RelationRequest;
 
 trait BuildsRelationships
 {
     protected array $relations = [];
+
+    protected bool $wantsAllRelations = false;
+
+    protected bool $wantsAllNestedRelations = false;
 
     protected function prepareRelation(RelationRequest $request): self
     {
@@ -33,7 +31,7 @@ trait BuildsRelationships
 
     protected function createRelatedBuilder(RelationRequest $request): self
     {
-        return $this->relations[$request->getRelationName()] ??= static::make($request->getRelatedModel());
+        return $this->relations[$request->getRelationName()] ??= static::make($request->getRelatedModel())->withAllNested($this->wantsAllNestedRelations);
     }
 
     protected function extractRelations(array $attributes): array
@@ -47,83 +45,55 @@ trait BuildsRelationships
             }
         }
 
-        dump('return attributes', $attributes);
-
         return $attributes;
     }
 
-//    protected function makeRelation($name): ? Relation
-//    {
-//        if (method_exists($this->model, $name) && ($relation = $this->model->$name()) instanceof Relation) {
-//            return $relation;
-//        }
-//
-//        return null;
-//    }
-//
     protected function wantsRelation($name): bool
     {
-        return isset($this->relations[$name]) || isset($this->relations['*']);
+        return isset($this->relations[$name]) || $this->wantsAllRelations;
     }
 
     protected function saveBelongsTo()
     {
         collect($this->relations)
             ->filter($this->relationTypeIs(BelongsTo::class))
-            ->each(function (self $builder, $relation) {
+            ->each(function (self $builder, $relationName) {
                 $builder->attributes === null
-                    ? $this->newRelation($relation)->disassociate()
-                    : $this->newRelation($relation)->associate($builder->save());
+                    ? $this->newRelation($relationName)->disassociate()
+                    : $this->newRelation($relationName)->associate($builder->save());
             });
     }
 
+    protected function saveHasMany()
+    {
+        collect($this->relations)
+            ->filter($this->relationTypeIs(HasOneOrMany::class))
+            ->each(function (self $builder, $relationName) {
+                $relation = $this->newRelation($relationName);
+                $existing = $relation->get()->keyBy->getKey();
+                $new = $builder->model->newCollection();
 
-//
-//    /**
-//     * Create all requested BelongsToMany relations.
-//     *
-//     * @param Model $sibling
-//     */
-//    protected function createBelongsToMany($sibling)
-//    {
-//        collect($this->relations)
-//            ->filter($this->relationTypeIs(BelongsToMany::class))
-//            ->each(function ($batches, $relation) use ($sibling) {
-//                foreach ($batches as $factory) {
-//                    $this
-//                        ->collect($factory->inheritConnection($this)->create())
-//                        ->map(function ($model) use ($sibling, $relation, $factory) {
-//                            return $sibling->$relation()->save($model, $this->mergeAndExpandAttributes($factory->pivotAttributes));
-//                        });
-//                }
-//            });
-//    }
-//
-//    /**
-//     * Create all requested HasMany relations.
-//     *
-//     * @param Model $parent
-//     */
-//    protected function createHasMany($parent)
-//    {
-//        collect($this->relations)
-//            ->filter($this->relationTypeIs(HasOneOrMany::class))
-//            ->each(function ($batches, $relation) use ($parent) {
-//                foreach ($batches as $factory) {
-//                    // In case of morphOne / morphMany we'll need to set the morph type as well.
-//                    if (($relationClass = $this->newRelation($relation)) instanceof MorphOneOrMany) {
-//                        $factory->fill([
-//                            $relationClass->getMorphType() => (new $this->class)->getMorphClass(),
-//                        ]);
-//                    }
-//
-//                    $factory->inheritConnection($this)->create([
-//                        $parent->$relation()->getForeignKeyName() => $parent->$relation()->getParentKey(),
-//                    ]);
-//                }
-//            });
-//    }
-//
+                foreach ($builder->attributes as $attributes) {
+                    $builder
+                        ->setModel($existing->get($attributes[$builder->model->getKeyName()] ?? null, $builder->model->newInstance()))
+                        ->replaceAttributes($attributes);
+
+                    // In case of morphOne / morphMany we'll need to set the morph type as well.
+                    if ($relation instanceof MorphOneOrMany) {
+                        $builder->fill([$relation->getMorphType() => $this->model->getMorphClass()]);
+                    }
+
+                    $builder->fill([$relation->getForeignKeyName() => $this->model->getKey()]);
+
+                    tap($builder->save(), fn (Model $model) => $new->put($model->getKey(), $model));
+                }
+
+                $existing->except($new->keys()->all())->each->delete();
+
+                $this->model->setRelation($relationName, $new->values());
+            });
+    }
+
     protected function relationTypeIs($relationType): Closure
     {
         return function (self $builder, $relation) use ($relationType) {
@@ -135,11 +105,4 @@ trait BuildsRelationships
     {
         return $this->model->$relationName();
     }
-//
-//    protected function inheritConnection($factory)
-//    {
-//        if ($this->connection === null && (new $this->class)->getConnectionName() === null) {
-//            return $this->connection($factory->connection);
-//        }
-//    }
 }

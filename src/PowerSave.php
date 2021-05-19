@@ -3,13 +3,7 @@
 namespace Makeable\LaravelPowerSave;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Makeable\LaravelPowerSave\Concerns\BuildsRelationships;
-use function class_basename;
-use function collect;
-use function dump;
 
 class PowerSave
 {
@@ -21,8 +15,6 @@ class PowerSave
 
     protected $fillFn;
 
-//    protected array $pendingRelations = [];
-//
     public function __construct(Model $model)
     {
         $this->model = $model;
@@ -52,30 +44,42 @@ class PowerSave
         return $this;
     }
 
+    public function replaceAttributes(? array $attributes = []): self
+    {
+        $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    public function setModel(Model $model): self
+    {
+        $this->model = $model;
+
+        return $this;
+    }
+
     public function with($name, callable $policy = null): self
     {
         return $this->prepareRelation(new RelationRequest($this->model, $name, $policy));
     }
 
-    public function withAll(): self
+    public function withAll($bool = true): self
     {
-        return $this->with('*');
+        $this->wantsAllRelations = $bool;
+
+        return $this;
+    }
+
+    public function withAllNested($bool = true): self
+    {
+        $this->wantsAllRelations = $bool;
+        $this->wantsAllNestedRelations = $bool;
+
+        return $this;
     }
 
     public function save(array $data = []): Model
     {
-
-//        foreach ($data as $attribute => $value) {
-////            if ($this->wantsRelation($attribute) && ($relation = $this->makeRelation($attribute))) {
-////                $this->handleRelation($relation, $attribute, $value);
-////                continue;
-////            }
-//
-//            $this->model->$attribute = $value;
-//        }
-
-//        $fillFn = $this->fillFn ?? fn (Model $model, array $attributes) => $model->fill($attributes);
-
         $this
             ->fill($data)
             ->prepareModelForSave()
@@ -83,7 +87,7 @@ class PowerSave
 
         $this->model->save();
 
-//        $this->handlePendingRelations();
+        $this->saveHasMany();
 
         return $this->model;
     }
@@ -93,53 +97,11 @@ class PowerSave
         $key = $this->attributes[$this->model->getKeyName()] ?? null;
 
         if (! $this->model->exists && ! is_null($key)) {
-            $this->model = $this->model->newQuery()->firstOrFail($key);
+            $this->model = $this->model->findOrFail($key);
         }
 
         call_user_func($this->fillFn, $this->model, $this->extractRelations($this->attributes));
 
         return $this;
     }
-
-//
-//    protected function handleRelation(Relation $relation, $name, $data)
-//    {
-//        if ($relation instanceof BelongsTo) {
-//            $relation->associate(static::make($this->model->$name ?? $relation->getModel())->save($data));
-//        } elseif ($relation instanceof HasMany) {
-//            $this->pendingRelations[$name] = $data;
-//        } else {
-//            throw new \BadMethodCallException('Currently unsupported relation type: '.class_basename($relation));
-//        }
-//    }
-//
-//    protected function handlePendingRelations()
-//    {
-//        foreach ($this->pendingRelations as $relation => $data) {
-//            $this->syncHasMany($relation, $data);
-//        }
-//    }
-//
-//    protected function syncHasMany($name, array $data)
-//    {
-//        $updated = collect();
-//        $existing = $this->model->$name->keyBy->getKey();
-//        $relation = $this->makeRelation($name);
-//
-//        foreach ($data as $modelData) {
-//            $id = $modelData[$this->model->getKeyName()] ?? null;
-//
-//            if ($id) {
-//                if ($existing->has($id)) {
-//                    $updated->put($id, static::make($existing->get($id))->save($modelData));
-//                }
-//            } else {
-//                static::make($relation->make())->save($modelData);
-//            }
-//        }
-//
-//        $existing->except($updated->keys()->all())->each->delete();
-//
-//        $this->model->unsetRelation($name);
-//    }
 }
