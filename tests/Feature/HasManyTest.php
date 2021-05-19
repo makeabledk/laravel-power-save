@@ -59,5 +59,4 @@ class HasManyTest extends TestCase
 
         $this->assertNull(Post::find($originalIds[0]));
     }
-
 }

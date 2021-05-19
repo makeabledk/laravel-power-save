@@ -74,7 +74,7 @@ trait BuildsRelationships
                 $new = $builder->model->newCollection();
 
                 foreach ($builder->attributes as $attributes) {
-                    $builder
+                    $builder = (clone $builder)
                         ->setModel($existing->get($attributes[$builder->model->getKeyName()] ?? null, $builder->model->newInstance()))
                         ->replaceAttributes($attributes);
 
