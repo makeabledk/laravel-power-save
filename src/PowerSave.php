@@ -44,6 +44,19 @@ class PowerSave
         return $this;
     }
 
+    public function inheritConfiguration(self $other): self
+    {
+        $this->wantsAllRelations = $other->wantsAllRelations;
+        $this->wantsAllNestedRelations = $other->wantsAllNestedRelations;
+        $this->fillFn = $other->fillFn;
+
+        foreach ($other->relations as $name => $relation) {
+            $this->relations[$name] = self::make($relation->model)->inheritConfiguration($relation);
+        }
+
+        return $this;
+    }
+
     public function replaceAttributes(? array $attributes = []): self
     {
         $this->attributes = $attributes;

@@ -43,20 +43,22 @@ class RelationTest extends TestCase
             ->save([
                 'name' => 'Makeable',
                 'posts' => [
-                    ['name' => 'My first post'],
                     [
-                        'name' => 'My second post',
+                        'name' => 'My first post',
                         'comments' => [
                             ['body' => 'Awesome post']
                         ]
+                    ],
+                    [
+                        'name' => 'My second post',
                     ],
                 ]
             ]);
 
         $this->assertInstanceOf(User::class, $user);
         $this->assertEquals(2, $user->posts->count());
-        $this->assertEquals(0, $user->posts->get(0)->comments->count());
-        $this->assertEquals(1, $user->posts->get(1)->comments->count());
-        $this->assertEquals('Awesome post', $user->posts->get(1)->comments->get(0)->body);
+        $this->assertEquals(1, $user->posts->get(0)->comments->count());
+        $this->assertEquals('Awesome post', $user->posts->get(0)->comments->get(0)->body);
+        $this->assertEquals(0, $user->posts->get(1)->comments->count());
     }
 }

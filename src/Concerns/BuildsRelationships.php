@@ -74,9 +74,9 @@ trait BuildsRelationships
                 $new = $builder->model->newCollection();
 
                 foreach ($builder->attributes as $attributes) {
-                    $builder = (clone $builder)
-                        ->setModel($existing->get($attributes[$builder->model->getKeyName()] ?? null, $builder->model->newInstance()))
-                        ->replaceAttributes($attributes);
+                    $builder = static::make($existing->get($attributes[$builder->model->getKeyName()] ?? null, $builder->model->newInstance()))
+                        ->inheritConfiguration($builder)
+                        ->fill($attributes);
 
                     // In case of morphOne / morphMany we'll need to set the morph type as well.
                     if ($relation instanceof MorphOneOrMany) {
