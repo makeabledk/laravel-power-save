@@ -1,9 +1,11 @@
 
-# Laravel Translatable
+# Laravel Power Save
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/makeabledk/laravel-power-save.svg?style=flat-square)](https://packagist.org/packages/makeabledk/laravel-power-save)
-[![Build Status](https://img.shields.io/travis/makeabledk/laravel-power-save/master.svg?style=flat-square)](https://travis-ci.org/makeabledk/laravel-power-save)
-[![StyleCI](https://styleci.io/repos/210617296/shield?branch=master)](https://styleci.io/repos/210617296)
+[comment]: <> ([![Latest Version on Packagist]&#40;https://img.shields.io/packagist/v/makeabledk/laravel-power-save.svg?style=flat-square&#41;]&#40;https://packagist.org/packages/makeabledk/laravel-power-save&#41;)
+
+[comment]: <> ([![Build Status]&#40;https://img.shields.io/travis/makeabledk/laravel-power-save/master.svg?style=flat-square&#41;]&#40;https://travis-ci.org/makeabledk/laravel-power-save&#41;)
+
+[comment]: <> ([![StyleCI]&#40;https://styleci.io/repos/210617296/shield?branch=master&#41;]&#40;https://styleci.io/repos/210617296&#41;)
 
 
 **IMPORTANT NOTICE** 
