@@ -2,12 +2,8 @@
 
 namespace Makeable\LaravelPowerSave;
 
-use BadMethodCallException;
-use Closure;
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Collection;
 
 class RelationRequest
 {

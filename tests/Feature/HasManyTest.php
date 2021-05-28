@@ -6,7 +6,6 @@ use Makeable\LaravelPowerSave\PowerSave;
 use Makeable\LaravelPowerSave\Tests\Stubs\Post;
 use Makeable\LaravelPowerSave\Tests\Stubs\User;
 use Makeable\LaravelPowerSave\Tests\TestCase;
-use function Makeable\LaravelFactory\sequence;
 
 class HasManyTest extends TestCase
 {
@@ -20,7 +19,7 @@ class HasManyTest extends TestCase
                 'posts' => [
                     ['name' => 'My first post'],
                     ['name' => 'My second post'],
-                ]
+                ],
             ]);
 
         $this->assertInstanceOf(User::class, $user);

@@ -32,7 +32,7 @@ class ModelTest extends TestCase
     {
         $post = PowerSave::make(Post::class)
             ->fillUsing(fn (Post $model, array $attributes) => $model->fill(array_merge($attributes, [
-                'body' => 'Some text'
+                'body' => 'Some text',
             ])))
             ->save(['name' => 'My new blog post']);
 

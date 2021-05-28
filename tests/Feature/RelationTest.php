@@ -3,10 +3,8 @@
 namespace Makeable\LaravelPowerSave\Tests\Feature;
 
 use Makeable\LaravelPowerSave\PowerSave;
-use Makeable\LaravelPowerSave\Tests\Stubs\Post;
 use Makeable\LaravelPowerSave\Tests\Stubs\User;
 use Makeable\LaravelPowerSave\Tests\TestCase;
-use function Makeable\LaravelFactory\sequence;
 
 class RelationTest extends TestCase
 {
@@ -22,10 +20,10 @@ class RelationTest extends TestCase
                     [
                         'name' => 'My second post',
                         'comments' => [
-                            ['body' => 'Awesome post']
-                        ]
+                            ['body' => 'Awesome post'],
+                        ],
                     ],
-                ]
+                ],
             ]);
 
         $this->assertInstanceOf(User::class, $user);
@@ -46,13 +44,13 @@ class RelationTest extends TestCase
                     [
                         'name' => 'My first post',
                         'comments' => [
-                            ['body' => 'Awesome post']
-                        ]
+                            ['body' => 'Awesome post'],
+                        ],
                     ],
                     [
                         'name' => 'My second post',
                     ],
-                ]
+                ],
             ]);
 
         $this->assertInstanceOf(User::class, $user);
