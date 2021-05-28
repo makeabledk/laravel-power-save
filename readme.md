@@ -1,7 +1,7 @@
 
 # Laravel Power Save
 
-[comment]: <> ([![Latest Version on Packagist]&#40;https://img.shields.io/packagist/v/makeabledk/laravel-power-save.svg?style=flat-square&#41;]&#40;https://packagist.org/packages/makeabledk/laravel-power-save&#41;)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/makeabledk/laravel-power-save.svg?style=flat-square)](https://packagist.org/packages/makeabledk/laravel-power-save)
 
 [comment]: <> ([![Build Status]&#40;https://img.shields.io/travis/makeabledk/laravel-power-save/master.svg?style=flat-square&#41;]&#40;https://travis-ci.org/makeabledk/laravel-power-save&#41;)
 
