@@ -39,7 +39,6 @@ class TestCase extends BaseTestCase
 
         Hash::setRounds(4);
 
-
         //        $app->register(FactoryServiceProvider::class);
 
         // MySQL 5.6 compatibility

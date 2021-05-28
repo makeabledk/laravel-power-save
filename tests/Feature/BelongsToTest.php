@@ -17,8 +17,8 @@ class BelongsToTest extends TestCase
             ->save([
                 'name' => 'My new blog post',
                 'author' => [
-                    'name' => 'Makeable'
-                ]
+                    'name' => 'Makeable',
+                ],
             ]);
 
         $this->assertInstanceOf(Post::class, $post);

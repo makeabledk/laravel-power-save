@@ -11,7 +11,7 @@ class PowerSave
 
     protected Model $model;
 
-    protected ? array $attributes = [];
+    protected ?array $attributes = [];
 
     protected $fillFn;
 
@@ -26,7 +26,7 @@ class PowerSave
         return new static(is_string($model) ? new $model : $model);
     }
 
-    public function fill(? array $attributes): self
+    public function fill(?array $attributes): self
     {
         $this->attributes = array_merge($this->attributes ?? [], $attributes ?? []);
 
@@ -57,7 +57,7 @@ class PowerSave
         return $this;
     }
 
-    public function replaceAttributes(? array $attributes = []): self
+    public function replaceAttributes(?array $attributes = []): self
     {
         $this->attributes = $attributes;
 
